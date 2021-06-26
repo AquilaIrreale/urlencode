@@ -1,3 +1,4 @@
+
 /**************************************************************************
  * urlencode - base64-like encoder/decoder for URL percent-encoding       *
  * Copyright (C) 2021  Simone Cimarelli a.k.a. AquilaIrreale              *
@@ -15,6 +16,8 @@
  * You should have received a copy of the GNU General Public License      *
  * along with this program.  If not, see <https://www.gnu.org/licenses/>. *
  **************************************************************************/
+
+#include <config.h>
 
 #include <stdlib.h>
 #include <stdio.h>
