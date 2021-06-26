@@ -55,8 +55,7 @@ void decode()
             putchar(c);
         } else {
             char hex[3];
-            scanf("%2s", hex);
-            if (!isxdigit(hex[0]) || !isxdigit(hex[1])) {
+            if (scanf("%2s", hex) < 1 || !isxdigit(hex[0]) || !isxdigit(hex[1])) {
                 fprintf(stderr, "Bad code: `%2s'\n", hex);
                 exit(1);
             }
