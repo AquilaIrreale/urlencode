@@ -38,7 +38,7 @@ void encode()
         if (c == ' ') {
             putchar('+');
         } else if (!isprint(c) || strchr(reserved, c)) {
-            printf("%%%02x", c);
+            printf("%%%02hhx", c);
         } else {
             putchar(c);
         }
