@@ -43,6 +43,7 @@ void encode()
             putchar(c);
         }
     }
+    putchar('\n');
 }
 
 void decode()
