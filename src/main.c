@@ -27,19 +27,27 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+static bool encode_all = false;
 static bool action_decode = false;
 static bool help = false;
+static bool suppress_newline = false;
 
 int parse_options(int argc, char *argv[])
 {
     int c;
     while (((c = getopt(argc, argv, ":adhn"))) != -1) {
         switch (c) {
+            case 'a':
+                encode_all = true;
+                break;
             case 'd':
                 action_decode = true;
                 break;
             case 'h':
                 help = true;
+                break;
+            case 'n':
+                suppress_newline = true;
                 break;
             case '?':
                 return 1;
@@ -54,7 +62,7 @@ int parse_options(int argc, char *argv[])
 
 void usage(FILE *fd)
 {
-    fputs("USAGE: urlencode [-dh]\n", fd);
+    fputs("USAGE: urlencode [-adhn]\n", fd);
 }
 
 static const char reserved[] = "!#$%&'()*+,/:;=?@[]";
@@ -65,13 +73,15 @@ void encode()
     while (((c = getchar())) != EOF) {
         if (c == ' ') {
             putchar('+');
-        } else if (!isprint(c) || strchr(reserved, c)) {
+        } else if (encode_all || !isprint(c) || strchr(reserved, c)) {
             printf("%%%02hhx", c);
         } else {
             putchar(c);
         }
     }
-    putchar('\n');
+    if (!suppress_newline) {
+        putchar('\n');
+    }
 }
 
 void decode()
