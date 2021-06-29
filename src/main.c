@@ -19,17 +19,45 @@
 
 #include <config.h>
 
+#include <unistd.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
-static const char reserved[] = "!#$%&'()*+,/:;=?@[]";
+static bool action_decode = false;
+static bool help = false;
+
+int parse_options(int argc, char *argv[])
+{
+    int c;
+    while (((c = getopt(argc, argv, ":adhn"))) != -1) {
+        switch (c) {
+            case 'd':
+                action_decode = true;
+                break;
+            case 'h':
+                help = true;
+                break;
+            case '?':
+                return 1;
+            default:
+                fputs("getopt malfunction", stderr);
+                exit(1);
+        }
+    }
+
+    return 0;
+}
 
 void usage(FILE *fd)
 {
-    fputs("USAGE: urlencode [-d]\n", fd);
+    fputs("USAGE: urlencode [-dh]\n", fd);
 }
+
+static const char reserved[] = "!#$%&'()*+,/:;=?@[]";
 
 void encode()
 {
@@ -69,24 +97,18 @@ void decode()
 
 int main(int argc, char *argv[])
 {
-    if (argc == 1) {
-        encode();
-    } else if (argc == 2) {
-        const char *opt = argv[1];
-        if (strcmp(opt, "-h") == 0) {
-            usage(stdout);
-        } else if (strcmp(opt, "-d") == 0) {
-            decode();
-        } else {
-            goto error;
-        }
+    if (parse_options(argc, argv)) {
+        usage(stderr);
+        return 1;
+    }
+
+    if (help) {
+        usage(stdout);
+    } else if (action_decode) {
+        decode();
     } else {
-        goto error;
+        encode();
     }
 
     return 0;
-
-error:
-    usage(stderr);
-    return 1;
 }

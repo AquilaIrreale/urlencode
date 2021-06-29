@@ -10,6 +10,7 @@ AC_CONFIG_FILES([Makefile])
 
 # Checks for programs.
 AC_PROG_CC
+AC_PROG_CC_C99
 
 # Checks for libraries.
 
