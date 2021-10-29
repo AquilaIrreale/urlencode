@@ -31,11 +31,12 @@ static bool encode_all = false;
 static bool action_decode = false;
 static bool help = false;
 static bool suppress_newline = false;
+static bool line_mode = false;
 
 int parse_options(int argc, char *argv[])
 {
     int c;
-    while (((c = getopt(argc, argv, ":adhn"))) != -1) {
+    while (((c = getopt(argc, argv, ":adhln"))) != -1) {
         switch (c) {
             case 'a':
                 encode_all = true;
@@ -45,6 +46,9 @@ int parse_options(int argc, char *argv[])
                 break;
             case 'h':
                 help = true;
+                break;
+            case 'l':
+                line_mode = true;
                 break;
             case 'n':
                 suppress_newline = true;
@@ -69,6 +73,7 @@ void usage(FILE *fd)
         "\n"
         "  -a encode all bytes (and not just unsafe ones)\n"
         "  -d decode data\n"
+        "  -l encode input line by line\n"
         "  -n ignore trailing newlines in input\n"
         "\n"
         "  -h display this help and exit\n",
@@ -83,7 +88,8 @@ void encode()
     while (((c = getchar())) != EOF) {
         if (c == ' ') {
             putchar('+');
-        } else if (encode_all || !isprint(c) || strchr(reserved, c)) {
+        } else if ((encode_all || !isprint(c) || strchr(reserved, c))
+                && !(c == '\n' && line_mode)) {
             printf("%%%02hhx", c);
         } else {
             putchar(c);
