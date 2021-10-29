@@ -62,7 +62,17 @@ int parse_options(int argc, char *argv[])
 
 void usage(FILE *fd)
 {
-    fputs("USAGE: urlencode [-adhn]\n", fd);
+    fputs(
+        "Usage: urlencode [OPTION]\n"
+        "Translate to and from url encoding.\n"
+        "Reads from standard input, writes to standard output.\n"
+        "\n"
+        "  -a encode all bytes (and not just unsafe ones)\n"
+        "  -d decode data\n"
+        "  -n ignore trailing newlines in input\n"
+        "\n"
+        "  -h display this help and exit\n",
+        fd);
 }
 
 static const char reserved[] = "!#$%&'()*+,/:;=?@[]";
