@@ -27,19 +27,41 @@
 #include <ctype.h>
 #include <stdbool.h>
 
+void usage(FILE *fd)
+{
+    fputs(
+        "Usage: urlencode [OPTION]\n"
+        "Translate to and from URL encoding.\n"
+        "Reads from standard input, writes to standard output.\n"
+        "\n"
+        "  -a encode all characters\n"
+        "  -c specify a different set of reserved characters when encoding\n"
+        "  -d decode data\n"
+        "  -l encode input line by line\n"
+        "  -n do not output the trailing newline when encoding\n"
+        "\n"
+        "  -h display this help and exit\n",
+        fd);
+}
+
 static bool encode_all = false;
 static bool action_decode = false;
 static bool help = false;
 static bool suppress_newline = false;
 static bool line_mode = false;
 
+static const char *reserved = "!#$%&'()*+,/:;=?@[]";
+
 int parse_options(int argc, char *argv[])
 {
     int c;
-    while (((c = getopt(argc, argv, ":adhln"))) != -1) {
+    while (((c = getopt(argc, argv, ":ac:dhln"))) != -1) {
         switch (c) {
             case 'a':
                 encode_all = true;
+                break;
+            case 'c':
+                reserved = optarg;
                 break;
             case 'd':
                 action_decode = true;
@@ -54,33 +76,19 @@ int parse_options(int argc, char *argv[])
                 suppress_newline = true;
                 break;
             case '?':
+                usage(stderr);
+                return 1;
+            case ':':
+                fprintf(stderr, "missing argument for option -%c\n", optopt);
                 return 1;
             default:
                 fputs("getopt malfunction\n", stderr);
-                exit(1);
+                return 1;
         }
     }
 
     return 0;
 }
-
-void usage(FILE *fd)
-{
-    fputs(
-        "Usage: urlencode [OPTION]\n"
-        "Translate to and from URL encoding.\n"
-        "Reads from standard input, writes to standard output.\n"
-        "\n"
-        "  -a encode all characters\n"
-        "  -d decode data\n"
-        "  -l encode input line by line\n"
-        "  -n do not output the trailing newline when encoding\n"
-        "\n"
-        "  -h display this help and exit\n",
-        fd);
-}
-
-static const char reserved[] = "!#$%&'()*+,/:;=?@[]";
 
 void encode()
 {
@@ -124,7 +132,6 @@ void decode()
 int main(int argc, char *argv[])
 {
     if (parse_options(argc, argv)) {
-        usage(stderr);
         return 1;
     }
 
