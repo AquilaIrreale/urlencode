@@ -56,7 +56,7 @@ int parse_options(int argc, char *argv[])
             case '?':
                 return 1;
             default:
-                fputs("getopt malfunction", stderr);
+                fputs("getopt malfunction\n", stderr);
                 exit(1);
         }
     }
@@ -68,13 +68,13 @@ void usage(FILE *fd)
 {
     fputs(
         "Usage: urlencode [OPTION]\n"
-        "Translate to and from url encoding.\n"
+        "Translate to and from URL encoding.\n"
         "Reads from standard input, writes to standard output.\n"
         "\n"
-        "  -a encode all bytes (and not just unsafe ones)\n"
+        "  -a encode all characters\n"
         "  -d decode data\n"
         "  -l encode input line by line\n"
-        "  -n ignore trailing newlines in input\n"
+        "  -n do not output the trailing newline when encoding\n"
         "\n"
         "  -h display this help and exit\n",
         fd);
