@@ -35,6 +35,7 @@ void usage(FILE *fd)
         "Reads from standard input, writes to standard output.\n"
         "\n"
         "  -a encode all characters\n"
+        "  -b do not automatically encode non printable (i.e. binary) characters\n"
         "  -c specify a different set of reserved characters when encoding\n"
         "  -d decode data\n"
         "  -l encode input line by line\n"
@@ -45,6 +46,7 @@ void usage(FILE *fd)
 }
 
 static bool encode_all = false;
+static bool encode_binary = true;
 static bool action_decode = false;
 static bool help = false;
 static bool suppress_newline = false;
@@ -55,10 +57,13 @@ static const char *reserved = "!#$%&'()*+,/:;=?@[]";
 int parse_options(int argc, char *argv[])
 {
     int c;
-    while (((c = getopt(argc, argv, ":ac:dhln"))) != -1) {
+    while (((c = getopt(argc, argv, ":abc:dhln"))) != -1) {
         switch (c) {
             case 'a':
                 encode_all = true;
+                break;
+            case 'b':
+                encode_binary = false;
                 break;
             case 'c':
                 reserved = optarg;
@@ -96,8 +101,11 @@ void encode()
     while (((c = getchar())) != EOF) {
         if (c == ' ') {
             putchar('+');
-        } else if ((encode_all || !isprint(c) || strchr(reserved, c))
-                && !(c == '\n' && line_mode)) {
+        } else if (line_mode && c == '\n') {
+            putchar('\n');
+        } else if ((encode_all
+                    || (encode_binary && !isprint(c))
+                    || strchr(reserved, c))) {
             printf("%%%02hhx", c);
         } else {
             putchar(c);
