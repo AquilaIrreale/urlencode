@@ -1,6 +1,6 @@
 
 /**************************************************************************
- * urlencode - base64-like encoder/decoder for URL percent-encoding       *
+ * urlencode - base64-like encoder and decoder for URL encoding           *
  * Copyright (C) 2021  Simone Cimarelli a.k.a. AquilaIrreale              *
  *                                                                        *
  * This program is free software: you can redistribute it and/or modify   *
