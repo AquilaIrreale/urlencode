@@ -81,15 +81,22 @@ int parse_options(int argc, char *argv[])
                 suppress_newline = true;
                 break;
             case '?':
+                fprintf(stderr, "unrecognized option `-%c'\n\n", optopt);
                 usage(stderr);
                 return 1;
             case ':':
-                fprintf(stderr, "missing argument for option -%c\n", optopt);
+                fprintf(stderr, "missing argument for option -%c\n\n", optopt);
                 return 1;
             default:
                 fputs("getopt malfunction\n", stderr);
                 return 1;
         }
+    }
+
+    if (optind < argc) {
+        fprintf(stderr, "unrecognized option `%s'\n\n", argv[optind]);
+        usage(stderr);
+        return 1;
     }
 
     return 0;
