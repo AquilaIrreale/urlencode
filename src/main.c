@@ -40,6 +40,7 @@ void usage(FILE *fd)
         "  -d decode data\n"
         "  -l encode input line by line\n"
         "  -n do not output the trailing newline when encoding\n"
+        "  -u use upper-case hex codes instead of lower-case\n"
         "\n"
         "  -h display this help and exit\n",
         fd);
@@ -51,13 +52,14 @@ static bool action_decode = false;
 static bool help = false;
 static bool suppress_newline = false;
 static bool line_mode = false;
+static bool use_uppercase = false;
 
 static const char *reserved = "!#$%&'()*+,/:;=?@[]";
 
 int parse_options(int argc, char *argv[])
 {
     int c;
-    while (((c = getopt(argc, argv, ":abc:dhln"))) != -1) {
+    while (((c = getopt(argc, argv, ":abc:dhlnu"))) != -1) {
         switch (c) {
             case 'a':
                 encode_all = true;
@@ -79,6 +81,9 @@ int parse_options(int argc, char *argv[])
                 break;
             case 'n':
                 suppress_newline = true;
+                break;
+            case 'u':
+                use_uppercase = true;
                 break;
             case '?':
                 fprintf(stderr, "unrecognized option `-%c'\n\n", optopt);
@@ -113,7 +118,7 @@ void encode()
         } else if ((encode_all
                     || (encode_binary && !isprint(c))
                     || strchr(reserved, c))) {
-            printf("%%%02hhx", c);
+            printf((use_uppercase ? "%%%02hhX" : "%%%02hhx"), c);
         } else {
             putchar(c);
         }
